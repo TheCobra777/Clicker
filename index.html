@@ -50,37 +50,31 @@
 
     <script>
         let tg = window.Telegram.WebApp;
-        let count = parseInt(localStorage.getItem('clickCount') || '0');
+        let count = 0;
         const counterElement = document.getElementById('counter');
         const clickButton = document.getElementById('clickButton');
-        const syncButton = document.getElementById('syncButton');
 
         tg.expand();
+
         tg.ready();
 
-        function updateCounter() {
-            counterElement.textContent = `Счет: ${count}`;
-            localStorage.setItem('clickCount', count.toString());
+        // Проверяем, открыто ли приложение в Telegram WebApp
+        if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) {
+            document.body.innerHTML = "<h1>Это приложение доступно только через Telegram</h1>";
+        } else {
+            clickButton.addEventListener('click', () => {
+                count++;
+                counterElement.textContent = `Счет: ${count}`;
+                tg.sendData(count.toString());
+            });
         }
-
-        updateCounter();
-
-        clickButton.addEventListener('click', () => {
-            count++;
-            updateCounter();
-        });
-
-        syncButton.addEventListener('click', () => {
-            tg.sendData(count.toString());
-            tg.close();
-        });
 
         tg.onEvent('mainButtonClicked', function(){
             tg.sendData(count.toString());
             tg.close();
         });
 
-        tg.MainButton.setText('Синхронизировать');
+        tg.MainButton.setText('Завершить');
         tg.MainButton.show();
     </script>
 </body>
