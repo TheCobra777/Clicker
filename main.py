@@ -27,17 +27,17 @@ class botwebapp:
         """Обработчик начальной команды"""
         name = message.from_user.first_name
         user_id = message.from_user.id
-
+    
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="Кликер", web_app=WebAppInfo(url="https://thecobra777.github.io/Clicker/"))]
         ])
-
+    
         token_value = user_token_values.get(user_id, 0)
         text = (
             f"✨ Привет {name}\n\n"
             f"💰 Ты накликал {token_value}\n"
         )
-
+    
         photo = FSInputFile(IMAGE_PATH)
         await self.bot.send_photo(
             chat_id=message.chat.id,
