@@ -50,19 +50,38 @@
 
     <script>
         let tg = window.Telegram.WebApp;
-        let count = 0;
+        let count = parseInt(localStorage.getItem('clickCount') || '0');
         const counterElement = document.getElementById('counter');
         const clickButton = document.getElementById('clickButton');
+        const syncButton = document.getElementById('syncButton');
 
         tg.expand();
         tg.ready();
 
+        function updateCounter() {
+            counterElement.textContent = `Счет: ${count}`;
+            localStorage.setItem('clickCount', count.toString());
+        }
+
+        updateCounter();
+
         clickButton.addEventListener('click', () => {
             count++;
-            counterElement.textContent = `Счет: ${count}`;
-            // Отправка боту каждого клика
-            tg.sendData(count.toString());
+            updateCounter();
         });
+
+        syncButton.addEventListener('click', () => {
+            tg.sendData(count.toString());
+            tg.close();
+        });
+
+        tg.onEvent('mainButtonClicked', function(){
+            tg.sendData(count.toString());
+            tg.close();
+        });
+
+        tg.MainButton.setText('Синхронизировать');
+        tg.MainButton.show();
     </script>
 </body>
 </html>
