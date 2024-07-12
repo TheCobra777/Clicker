@@ -11,7 +11,6 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-# Словарь для хранения кликов пользователей
 user_clicks = {}
 
 class botwebapp:
