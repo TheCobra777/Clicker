@@ -49,36 +49,29 @@
     </div>
 
     <script>
-        class Clicker {
-            constructor() {
-                this.count = 0;
-                this.counterElement = document.getElementById('counter');
-                this.clickButton = document.getElementById('clickButton');
-                this.init();
-            }
-            init() {
-                this.clickButton.addEventListener('click', () => this.incrementCount());
-            }
+        let tg = window.Telegram.WebApp;
+        let count = 0;
+        const counterElement = document.getElementById('counter');
+        const clickButton = document.getElementById('clickButton');
 
-            incrementCount() {
-                this.count++;
-                this.updateDisplay();
-                this.sendDataToBot();
-            }
+        tg.expand();
 
-            updateDisplay() {
-                this.counterElement.textContent = `Счет: ${this.count}`;
-            }
+        tg.ready();
 
-            sendDataToBot() {
-                if (window.Telegram && window.Telegram.WebApp) {
-                    window.Telegram.WebApp.sendData(this.count.toString());
-                }
-            }
+        clickButton.addEventListener('click', () => {
+            count++;
+            counterElement.textContent = `Счет: ${count}`;
+            sendDataToBot(count);
+        });
+
+        function sendDataToBot(value) {
+            tg.sendData(value.toString());
         }
 
-        // Инициализация кликера
-        document.addEventListener('DOMContentLoaded', () => new Clicker());
+        tg.onEvent('mainButtonClicked', function(){
+            tg.sendData(count.toString());
+            tg.close();
+        });
     </script>
 </body>
 </html>
