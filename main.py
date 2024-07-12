@@ -4,13 +4,12 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo, FSInputFile
 from config import BOT_TOKEN, IMAGE_PATH
+from db import conn, get_user_clicks, update_user_clicks
 
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
-
-user_token_values = {}
 
 class botwebapp:
 
@@ -32,7 +31,7 @@ class botwebapp:
             [InlineKeyboardButton(text="Кликер", web_app=WebAppInfo(url="https://thecobra777.github.io/Clicker/"))]
         ])
     
-        token_value = user_token_values.get(user_id, 0)
+        token_value = get_user_clicks(conn, user_id)
         text = (
             f"✨ Привет {name}\n\n"
             f"💰 Ты накликал {token_value}\n"
@@ -53,7 +52,8 @@ class botwebapp:
             try:
                 token_value = int(data)
                 user_id = message.from_user.id
-                user_token_values[user_id] = token_value
+                username = message.from_user.username or message.from_user.first_name
+                update_user_clicks(conn, user_id, username, token_value)
                 
                 name = message.from_user.first_name
                 text = (
