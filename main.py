@@ -1,15 +1,18 @@
 import asyncio
 import logging
+import json
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo, FSInputFile
 from config import BOT_TOKEN, IMAGE_PATH
-from db import conn, get_user_clicks, update_user_clicks
 
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
+
+# Словарь для хранения кликов пользователей
+user_clicks = {}
 
 class botwebapp:
 
@@ -23,7 +26,6 @@ class botwebapp:
         self.dp.message.register(self.handle_webapp_data)
 
     async def cmd_start(self, message: types.Message):
-        """Обработчик начальной команды"""
         name = message.from_user.first_name
         user_id = message.from_user.id
     
@@ -31,7 +33,7 @@ class botwebapp:
             [InlineKeyboardButton(text="Кликер", web_app=WebAppInfo(url="https://thecobra777.github.io/Clicker/"))]
         ])
     
-        token_value = get_user_clicks(conn, user_id)
+        token_value = user_clicks.get(user_id, 0)
         text = (
             f"✨ Привет {name}\n\n"
             f"💰 Ты накликал {token_value}\n"
@@ -46,14 +48,14 @@ class botwebapp:
         )
 
     async def handle_webapp_data(self, message: types.Message):
-        """Обрабатывает ответы от вебапп"""
-        if message.web_app_data:
-            data = message.web_app_data.data
-            try:
-                token_value = int(data)
-                user_id = message.from_user.id
-                username = message.from_user.username or message.from_user.first_name
-                update_user_clicks(conn, user_id, username, token_value)
+        if message.web_app_
+            data = json.loads(message.web_app_data.data)
+            user_id = message.from_user.id
+            username = message.from_user.username or message.from_user.first_name
+
+            if data['action'] == 'click':
+                token_value = data['count']
+                user_clicks[user_id] = token_value
                 
                 name = message.from_user.first_name
                 text = (
@@ -72,8 +74,16 @@ class botwebapp:
                     caption=text,
                     reply_markup=keyboard
                 )
-            except ValueError:
-                await message.answer("Получены некорректные данные")
+            elif data['action'] == 'getStats':
+                sorted_users = sorted(user_clicks.items(), key=lambda x: x[1], reverse=True)
+                stats = []
+                for i, (user_id, clicks) in enumerate(sorted_users, 1):
+                    user = await self.bot.get_chat(user_id)
+                    username = user.username or user.first_name
+                    stats.append(f"TOP {i} | @{username} - {clicks} Кликов")
+                
+                stats_text = "\n".join(stats)
+                await message.answer(stats_text)
         else:
             logging.warning(f"Получено сообщение без web_app_ {message}")
 
