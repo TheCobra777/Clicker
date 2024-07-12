@@ -1,9 +1,9 @@
-<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Кликер</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,13 +61,14 @@
         clickButton.addEventListener('click', () => {
             count++;
             counterElement.textContent = `Счет: ${count}`;
-            sendDataToBot(count);
         });
 
-        function sendDataToBot(value) {
-            tg.sendData(value.toString());
-            tg.close();
-        }
+        tg.MainButton.text = "Отправить результат";
+        tg.MainButton.show();
+
+        tg.MainButton.onClick(function(){
+            tg.sendData(count.toString());
+        });
     </script>
 </body>
 </html>
