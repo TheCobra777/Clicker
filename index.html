@@ -66,12 +66,8 @@
 
         function sendDataToBot(value) {
             tg.sendData(value.toString());
-        }
-
-        tg.onEvent('mainButtonClicked', function(){
-            tg.sendData(count.toString());
             tg.close();
-        });
+        }
     </script>
 </body>
 </html>
