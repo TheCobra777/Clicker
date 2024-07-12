@@ -62,7 +62,7 @@ class botwebapp:
                 )
                 
                 keyboard = InlineKeyboardMarkup(inline_keyboard=[
-                    [InlineKeyboardButton(text="Кликер", web_app=WebAppInfo(url="https://thecobra777.github.io/test/"))]
+                    [InlineKeyboardButton(text="Кликер", web_app=WebAppInfo(url="https://thecobra777.github.io/Clicker/"))]
                 ])
                 
                 photo = FSInputFile(IMAGE_PATH)
@@ -75,7 +75,7 @@ class botwebapp:
             except ValueError:
                 await message.answer("Получены некорректные данные")
         else:
-            logging.warning(f"Получено сообщение без web_app_data: {message}")
+            logging.warning(f"Получено сообщение без web_app_ {message}")
 
 async def main():
     bot_handler = botwebapp(bot, dp)
