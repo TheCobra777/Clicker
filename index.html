@@ -18,7 +18,7 @@
         .container {
             text-align: center;
         }
-        #clickButton {
+        #clickButton, #statsButton, #backButton {
             background-color: #4CAF50;
             border: none;
             color: white;
@@ -32,20 +32,32 @@
             border-radius: 5px;
             transition: background-color 0.3s;
         }
-        #clickButton:hover {
+        #clickButton:hover, #statsButton:hover, #backButton:hover {
             background-color: #45a049;
         }
         #counter {
             font-size: 24px;
             margin-bottom: 20px;
         }
+        #statsContainer {
+            display: none;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Кликер</h1>
-        <div id="counter">Счет: 0</div>
-        <button id="clickButton">Клик</button>
+        <div id="clickerContainer">
+            <h1>Кликер</h1>
+            <div id="counter">Счет: 0</div>
+            <button id="clickButton">Клик</button>
+            <button id="statsButton">Статистика</button>
+        </div>
+        <div id="statsContainer">
+            <h1>Статистика</h1>
+            <div id="statsContent"></div>
+            <button id="backButton">Назад</button>
+        </div>
     </div>
 
     <script>
@@ -53,29 +65,38 @@
         let count = 0;
         const counterElement = document.getElementById('counter');
         const clickButton = document.getElementById('clickButton');
+        const statsButton = document.getElementById('statsButton');
+        const backButton = document.getElementById('backButton');
+        const clickerContainer = document.getElementById('clickerContainer');
+        const statsContainer = document.getElementById('statsContainer');
 
         tg.expand();
-
         tg.ready();
 
-        // Проверяем, открыто ли приложение в Telegram WebApp
         if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) {
             document.body.innerHTML = "<h1>Это приложение доступно только через Telegram</h1>";
         } else {
             clickButton.addEventListener('click', () => {
                 count++;
                 counterElement.textContent = `Счет: ${count}`;
-                tg.sendData(count.toString());
+                tg.sendData(JSON.stringify({action: 'click', count: count}));
+            });
+
+            statsButton.addEventListener('click', () => {
+                clickerContainer.style.display = 'none';
+                statsContainer.style.display = 'block';
+                tg.sendData(JSON.stringify({action: 'getStats'}));
+            });
+
+            backButton.addEventListener('click', () => {
+                statsContainer.style.display = 'none';
+                clickerContainer.style.display = 'block';
             });
         }
 
         tg.onEvent('mainButtonClicked', function(){
-            tg.sendData(count.toString());
-            tg.close();
+            tg.sendData(JSON.stringify({action: 'click', count: count}));
         });
-
-        tg.MainButton.setText('Завершить');
-        tg.MainButton.show();
     </script>
 </body>
 </html>
