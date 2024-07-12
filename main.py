@@ -5,14 +5,19 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo, FSInputFile
 from config import BOT_TOKEN, IMAGE_PATH
+import pickle
 
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
-"""Словарь для кликов"""
-user_clicks = {}
+# Загрузка сохраненных данных
+try:
+    with open('user_clicks.pickle', 'rb') as f:
+        user_clicks = pickle.load(f)
+except FileNotFoundError:
+    user_clicks = {}
 
 class botwebapp:
 
@@ -51,7 +56,7 @@ class botwebapp:
 
     async def handle_webapp_data(self, message: types.Message):
         """Обрабатывает ответы от вебапп"""
-        if message.web_app_data:
+        if message.web_app_
             data = json.loads(message.web_app_data.data)
             user_id = message.from_user.id
             username = message.from_user.username or message.from_user.first_name
@@ -77,22 +82,28 @@ class botwebapp:
                     caption=text,
                     reply_markup=keyboard
                 )
+                
+                # Сохранение данных после каждого клика
+                with open('user_clicks.pickle', 'wb') as f:
+                    pickle.dump(user_clicks, f)
+                
             elif data['action'] == 'getStats':
                 sorted_users = sorted(user_clicks.items(), key=lambda x: x[1], reverse=True)
                 stats = []
-                for i, (user_id, clicks) in enumerate(sorted_users, 1):
+                for i, (user_id, clicks) in enumerate(sorted_users[:10], 1):  # Показываем только топ-10
                     user = await self.bot.get_chat(user_id)
                     username = user.username or user.first_name
                     stats.append(f"TOP {i} | @{username} - {clicks} Кликов")
                 
-                stats_text = "\n".join(stats)
+                stats_text = "\n".join(stats) if stats else "Пока нет данных о кликах"
                 await message.answer(stats_text)
         else:
-            logging.warning(f"Получено сообщение без web_app_ {message}")
+            logging.warning(f"Получено сообщение без web_app_data: {message}")
 
     async def delete_user_reply(self, message: types.Message):
         """Удаляет ответы от пользователя"""
-        await message.delete()
+        if not message.text.startswith('/'):
+            await message.delete()
 
 async def main():
     bot_handler = botwebapp(bot, dp)
