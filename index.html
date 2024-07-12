@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кликер</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        #clickButton {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        #clickButton:hover {
+            background-color: #45a049;
+        }
+        #counter {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Кликер</h1>
+        <div id="counter">Счет: 0</div>
+        <button id="clickButton">Клик</button>
+    </div>
+
+    <script>
+        class Clicker {
+            constructor() {
+                this.count = 0;
+                this.counterElement = document.getElementById('counter');
+                this.clickButton = document.getElementById('clickButton');
+                this.init();
+            }
+            init() {
+                this.clickButton.addEventListener('click', () => this.incrementCount());
+            }
+
+            incrementCount() {
+                this.count++;
+                this.updateDisplay();
+                this.sendDataToBot();
+            }
+
+            updateDisplay() {
+                this.counterElement.textContent = `Счет: ${this.count}`;
+            }
+
+            sendDataToBot() {
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.sendData(this.count.toString());
+                }
+            }
+        }
+
+        // Инициализация кликера
+        document.addEventListener('DOMContentLoaded', () => new Clicker());
+    </script>
+</body>
+</html>
