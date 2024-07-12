@@ -90,11 +90,9 @@ class botwebapp:
         else:
             logging.warning(f"Получено сообщение без web_app_ {message}")
 
-    async def delete_user_reply(self, message: types.Message):
-        """Удаляет ответ пользователя на сообщение бота"""
-        if message.reply_to_message and message.reply_to_message.from_user.id == self.bot.id:
-            if "✨ Привет" in message.reply_to_message.text and "💰 Ты накликал" in message.reply_to_message.text:
-                await message.delete()
+    async def delete_message(self, message: types.Message):
+        """Удаляет ответы от пользователя"""
+        await message.delete()
 
 async def main():
     bot_handler = botwebapp(bot, dp)
