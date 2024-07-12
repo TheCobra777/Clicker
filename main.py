@@ -90,7 +90,7 @@ class botwebapp:
         else:
             logging.warning(f"Получено сообщение без web_app_ {message}")
 
-    async def delete_message(self, message: types.Message):
+    async def delete_user_reply(self, message: types.Message):
         """Удаляет ответы от пользователя"""
         await message.delete()
 
