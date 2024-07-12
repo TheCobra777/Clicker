@@ -55,18 +55,12 @@
         const clickButton = document.getElementById('clickButton');
 
         tg.expand();
-
         tg.ready();
 
         clickButton.addEventListener('click', () => {
             count++;
             counterElement.textContent = `Счет: ${count}`;
-        });
-
-        tg.MainButton.text = "Отправить результат";
-        tg.MainButton.show();
-
-        tg.MainButton.onClick(function(){
+            // Отправка боту каждого клика
             tg.sendData(count.toString());
         });
     </script>
