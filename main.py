@@ -56,7 +56,7 @@ class botwebapp:
 
     async def handle_webapp_data(self, message: types.Message):
         """Обрабатывает ответы от вебапп"""
-        if message.web_app_
+        if message.web_app_data:
             data = json.loads(message.web_app_data.data)
             user_id = message.from_user.id
             username = message.from_user.username or message.from_user.first_name
