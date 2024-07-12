@@ -29,7 +29,7 @@ class botwebapp:
         user_id = message.from_user.id
 
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Кликер", web_app=WebAppInfo(url="https://thecobra777.github.io/test/"))]
+            [InlineKeyboardButton(text="Кликер", web_app=WebAppInfo(url="https://thecobra777.github.io/Clicker/"))]
         ])
 
         token_value = user_token_values.get(user_id, 0)
