@@ -1,4 +1,4 @@
 import os
 
-BOT_TOKEN = os.getenv('7071213124:AAEHPAV3GGZCoKKSUrNikaUe_OwNvxruYxU')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 IMAGE_PATH = "token.png"
