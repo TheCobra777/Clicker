@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
+"""Словарь для кликов"""
 user_clicks = {}
 
 class botwebapp:
@@ -23,8 +24,10 @@ class botwebapp:
     def _register_handlers(self):
         self.dp.message.register(self.cmd_start, Command(commands=["start"]))
         self.dp.message.register(self.handle_webapp_data)
+        self.dp.message.register(self.delete_user_reply)
 
     async def cmd_start(self, message: types.Message):
+        """Обработчик начальной команды"""
         name = message.from_user.first_name
         user_id = message.from_user.id
     
@@ -47,7 +50,8 @@ class botwebapp:
         )
 
     async def handle_webapp_data(self, message: types.Message):
-        if message.web_app_
+        """Обрабатывает ответы от вебапп"""
+        if message.web_app_data:
             data = json.loads(message.web_app_data.data)
             user_id = message.from_user.id
             username = message.from_user.username or message.from_user.first_name
@@ -85,6 +89,12 @@ class botwebapp:
                 await message.answer(stats_text)
         else:
             logging.warning(f"Получено сообщение без web_app_ {message}")
+
+    async def delete_user_reply(self, message: types.Message):
+        """Удаляет ответ пользователя на сообщение бота"""
+        if message.reply_to_message and message.reply_to_message.from_user.id == self.bot.id:
+            if "✨ Привет" in message.reply_to_message.text and "💰 Ты накликал" in message.reply_to_message.text:
+                await message.delete()
 
 async def main():
     bot_handler = botwebapp(bot, dp)
